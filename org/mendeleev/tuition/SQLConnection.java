@@ -5,18 +5,17 @@ import org.springframework.beans.factory.InitializingBean;
 
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.Map;
 import java.util.Properties;
+
 
 public class SQLConnection
      implements Destroyable, InitializingBean {
 
      private String username;
      private String passwd;
-     private String IP;
+     private String url;
      private int port;
      private Connection conn;
 
@@ -36,12 +35,12 @@ public class SQLConnection
           this.passwd = passwd;
      }
 
-     public String getIP() {
-          return IP;
+     public String geturl() {
+          return url;
      }
 
-     public void setIP(String IP) {
-          this.IP = IP;
+     public void seturl(String url) {
+          this.url = url;
      }
 
      public int getPort() {
@@ -52,19 +51,25 @@ public class SQLConnection
           this.port = port;
      }
 
-     public void execute(final String query) throws SQLException {
-          
+     public void execute(final String query, Map<Object, Integer> mp) throws SQLException {
+          PreparedStatement prep = conn.prepareCall(query);
+          int index = 0;
+          for(Map.Entry<Object,Integer> ent : mp.entrySet()){
+               prep.setObject(index,ent.getKey(),ent.getValue());
+               index++;
+          }
      }
 
      @Override
      public void afterPropertiesSet() throws Exception {
           try {
-               ClassLoader.getPlatformClassLoader().loadClass("com.mysql.jdbc.Driver");
+               Class.forName("com.mysql.cj.jdbc.Driver");
           }catch (ClassNotFoundException cls){
                System.err.println("[!]No Driver class found!");
                return;
           }
-          conn = DriverManager.getConnection(IP, username, passwd);
+          conn = DriverManager.getConnection(url+":"+port, username, passwd);
+          System.out.printf("Connection established -> %s\r\n",conn.toString());
      }
 
      @Override

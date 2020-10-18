@@ -10,7 +10,7 @@ public class SQLWithSpring {
           ClassPathXmlApplicationContext appl = null;
           try {
                 appl = new ClassPathXmlApplicationContext(XMLPATH);
-
+                SQLConnection sql = appl.getBean("SQLConn",SQLConnection.class);
           }finally {
                 appl.close();
           }
