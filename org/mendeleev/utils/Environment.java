@@ -1,10 +1,10 @@
 package org.mendeleev.utils;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 public class Environment {
 
-
-     static{
-
-     }
+     public static ClassPathXmlApplicationContext appl =
+          new ClassPathXmlApplicationContext("setting.xml");
 
 }
