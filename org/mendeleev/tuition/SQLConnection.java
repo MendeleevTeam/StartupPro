@@ -16,8 +16,17 @@ public class SQLConnection
      private String username;
      private String passwd;
      private String url;
+     private String database;
      private int port;
      private Connection conn;
+
+     public String getDatabase() {
+          return database;
+     }
+
+     public void setDatabase(String database) {
+          this.database = database;
+     }
 
      public String getUsername() {
           return username;
@@ -51,6 +60,12 @@ public class SQLConnection
           this.port = port;
      }
 
+     public Statement execute(final String query) throws SQLException {
+          Statement t = conn.createStatement();
+          t.execute(query);
+          return t;
+     }
+
      public void execute(final String query, Map<Object, Integer> mp) throws SQLException {
           PreparedStatement prep = conn.prepareCall(query);
           int index = 0;
@@ -58,6 +73,8 @@ public class SQLConnection
                prep.setObject(index,ent.getKey(),ent.getValue());
                index++;
           }
+          prep.executeUpdate();
+          prep.close();
      }
 
      @Override
@@ -68,7 +85,7 @@ public class SQLConnection
                System.err.println("[!]No Driver class found!");
                return;
           }
-          conn = DriverManager.getConnection(url+":"+port, username, passwd);
+          conn = DriverManager.getConnection(url+":"+port+"/"+database, username, passwd);
           System.out.printf("Connection established -> %s\r\n",conn.toString());
      }
 
