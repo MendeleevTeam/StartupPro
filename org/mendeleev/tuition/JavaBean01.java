@@ -46,6 +46,3 @@ public class JavaBean01
      }
 }
 
-class SQLConnection {
-
-}
