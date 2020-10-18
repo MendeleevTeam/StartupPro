@@ -50,7 +50,7 @@ public abstract class Source
                     try {
                          each.close();
                     } catch (IOException e) {
-                         e.printStackTrace();
+                         e.printStackTrace(errorLogger);
                     }
                }
           }

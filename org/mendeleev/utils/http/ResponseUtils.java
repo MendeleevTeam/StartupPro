@@ -1,6 +1,10 @@
 package org.mendeleev.utils.http;
 
-import java.text.DateFormat;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,6 +17,11 @@ public class ResponseUtils {
      public static String currentDate(){
           SimpleDateFormat d = new SimpleDateFormat();
           return d.format(new Date());
+     }
+
+     public static String getMIME(File f) throws IOException {
+          Path p = Paths.get(f.toURI());
+          return Files.probeContentType(p);
      }
 
 }

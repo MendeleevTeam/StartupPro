@@ -1,10 +1,13 @@
 package org.mendeleev.utils;
 
 import org.mendeleev.utils.http.ResponseContext;
+import org.mendeleev.utils.http.ResponseUtils;
 
 import javax.security.auth.DestroyFailedException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class FileSource
      extends Source{
@@ -28,21 +31,24 @@ public class FileSource
           try {
 
                ResponseContext con = new ResponseContext("HTTP/2.0",statue);
-
+               con.addHeader("Server","NGINX");
+               con.addHeader("Date", ResponseUtils.currentDate());
+               con.addHeader("Content-length",String.valueOf(getSize()));
+               con.addHeader("Content-type", ResponseUtils.getMIME(f));
                bo = new BufferedOutputStream(resp.getOutputStream());
+               bo.write(con.data());
                byte[] buffer = new byte[1024];
                int read = 0;
                while(read!=-1){
                     read = is.read(buffer);
                     bo.write(buffer,0,read);
-                    System.out.print(new String(buffer));
                }
                is.reset();
           } catch (FileNotFoundException e) {
-               System.err.println(e);
+               errorLogger.println(e);
                e.printStackTrace(errorLogger);
           } catch (IOException e) {
-               System.err.println(e);
+               errorLogger.println(e);
                e.printStackTrace(errorLogger);
           } finally {
                close(bo);
@@ -57,7 +63,7 @@ public class FileSource
                is = new BufferedInputStream(new FileInputStream(f));
                is.mark(Integer.MAX_VALUE);
           }catch (IOException i){
-               System.err.println(i);
+               errorLogger.println(i);
                i.printStackTrace(errorLogger);
           }
      }
