@@ -16,16 +16,18 @@ public class FileSource
      }
 
      @Override
-     protected void operate(HttpServletResponse resp) {
+     public void operate(HttpServletResponse resp) {
           BufferedOutputStream bo = null;
           try {
                bo = new BufferedOutputStream(resp.getOutputStream());
                byte[] buffer = new byte[1024];
                int read = 0;
-               do {
+               while(read!=-1){
                     read = is.read(buffer);
                     bo.write(buffer,0,read);
-               }while(read!=0);
+                    System.out.print(new String(buffer));
+               }
+               is.reset();
           } catch (FileNotFoundException e) {
                System.err.println(e);
                e.printStackTrace(errorLogger);
@@ -42,6 +44,7 @@ public class FileSource
           super.afterPropertiesSet();
           try{
                is = new BufferedInputStream(new FileInputStream(sourcePath));
+               is.mark(Integer.MAX_VALUE);
           }catch (IOException i){
                System.err.println(i);
                i.printStackTrace(errorLogger);
