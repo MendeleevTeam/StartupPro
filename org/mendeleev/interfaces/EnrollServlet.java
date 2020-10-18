@@ -1,4 +1,4 @@
-package org.mendeleev.web01;
+package org.mendeleev.interfaces;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

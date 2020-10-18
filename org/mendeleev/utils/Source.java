@@ -5,10 +5,7 @@ import org.springframework.beans.factory.InitializingBean;
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.*;
 
 public abstract class Source
      implements Destroyable, InitializingBean {
@@ -44,10 +41,19 @@ public abstract class Source
           this.sourcePath = sourcePath;
      }
 
-     protected abstract void operate(HttpServletResponse resp);
+     protected abstract void operate(HttpServletResponse resp,String statue);
 
      protected void close(Closeable...c){
-
+          for (Closeable each:
+               c) {
+               if(c!=null) {
+                    try {
+                         each.close();
+                    } catch (IOException e) {
+                         e.printStackTrace();
+                    }
+               }
+          }
      }
 
 }
